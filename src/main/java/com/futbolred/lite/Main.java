@@ -1,67 +1,94 @@
 package com.futbolred.lite;
 
-import com.futbolred.lite.domain.model.*;
+import com.futbolred.lite.application.service.MatchService;
+import com.futbolred.lite.application.service.PlayerService;
+import com.futbolred.lite.application.service.TeamService;
+import com.futbolred.lite.domain.model.Match;
+import com.futbolred.lite.domain.model.Player;
+import com.futbolred.lite.domain.model.Team;
 
-import java.util.ArrayList;
 import java.util.List;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
+
     public static void main(String[] args) {
+
         System.out.println("=== Futbol Red Lite ===");
 
-        Team union = new Team(1L, "Union Tilapa", "Sabatina", "Tilapa");
-        //System.out.println(team);
-        Team cuervos = new Team(2L, "Cuervos", "Sabatina", "Izúcar");
-        //System.out.println(team1);
+        TeamService teamService = new TeamService();
+        PlayerService playerService = new PlayerService();
+        MatchService matchService = new MatchService();
 
-        //Listado de Equipos
-        List<Team> teams = new ArrayList<>();
-        teams.add(union);
-        teams.add(cuervos);
+        Team cobras = teamService.createTeam("Cobras de Atencingo", "Libre", "Atencingo");
+        Team atleticos = teamService.createTeam("Atléticos de San Nicolás", "Libre", "San Nicolás");
+        Team rockies = teamService.createTeam("Rockies de Colón", "Libre", "Colón");
+        Team seleccionSanJuan = teamService.createTeam("Selección San Juan", "Sub-14", "San Juan");
 
-        Player player1 = new Player(1L, "Alexis Salmeron", "Delantero", 10, union);
-        //System.out.println("player = " + player);
-        Player player2 = new Player(2L, "David Pardo", "Defensa", 4, cuervos);
-        //System.out.println("player = " + player1);
-        Player player3 = new Player(3L, "Jaziel Beltrán", "Delantero", 11, union);
+        System.out.println("Total teams: " + teamService.countTeams());
 
-        //Listado de Jugadores
-        List<Player> players = new ArrayList<>();
-        players.add(player1);
-        players.add(player2);
-        players.add(player3);
+        playerService.createPlayer("Juan Pérez", "Forward", 9, cobras);
+        playerService.createPlayer("Carlos Ramírez", "Goalkeeper", 1, cobras);
+        playerService.createPlayer("Luis Hernández", "Midfielder", 10, cobras);
 
-        //Crear Partido
-        Match match = new Match(1L, union, cuervos);
+        playerService.createPlayer("Miguel López", "Forward", 11, atleticos);
+        playerService.createPlayer("Pedro Sánchez", "Defender", 4, atleticos);
+        playerService.createPlayer("Raúl García", "Goalkeeper", 1, atleticos);
 
-        //Lista de partidos
-        List <Match> matches = new ArrayList<>();
-        matches.add(match);
+        playerService.createPlayer("Diego Martínez", "Forward", 7, rockies);
+        playerService.createPlayer("Ángel Torres", "Midfielder", 8, rockies);
+        playerService.createPlayer("Jorge Flores", "Defender", 5, rockies);
 
+        playerService.createPlayer("Emiliano Cruz", "Forward", 9, seleccionSanJuan);
+        playerService.createPlayer("Mateo Morales", "Midfielder", 10, seleccionSanJuan);
+        playerService.createPlayer("Santiago Reyes", "Goalkeeper", 1, seleccionSanJuan);
+
+        System.out.println("Total players: " + playerService.countPlayers());
+
+        matchService.createMatch(cobras, atleticos);
+        matchService.createMatch(rockies, seleccionSanJuan);
+        matchService.createMatch(cobras, rockies);
+        //matchService.createMatch(cobras,cobras);
+        //System.out.println("Primer Partido "+matchService.findMatchById(1L).get().toString());
+
+        System.out.println("Total matches: " + matchService.countMatches());
+
+        printTeams(teamService.getAllTeams());
+        printPlayers(playerService.getAllPlayers());
+        printMatches(matchService.getAllMatches());
+
+        System.out.println("\n--- Players from Cobras de Atencingo ---");
+        List<Player> cobrasPlayers = playerService.getPlayersByTeam(cobras);
+        for (Player player : cobrasPlayers) {
+            System.out.println(player);
+        }
+
+        System.out.println("\n--- Matches from Cobras de Atencingo ---");
+        List<Match> cobrasMatches = matchService.getMatchesByTeam(cobras);
+        for (Match match : cobrasMatches) {
+            System.out.println(match);
+        }
+    }
+
+
+
+    private static void printTeams(List<Team> teams) {
         System.out.println("\n--- Teams ---");
         for (Team team : teams) {
-            System.out.println(team.getName());
+            System.out.println(team);
         }
+    }
 
+    private static void printPlayers(List<Player> players) {
         System.out.println("\n--- Players ---");
         for (Player player : players) {
-            System.out.println(player.getName() + " " +player.getNumber() + " " + player.getTeam().getName());
+            System.out.println(player);
         }
+    }
 
-        match.setHomeGoals(2);
-        match.setAwayGoals(0);
-        match.setState(MatchState.FINISHED);
-
+    private static void printMatches(List<Match> matches) {
         System.out.println("\n--- Matches ---");
-        for (Match currentMatch : matches) {
-            System.out.println(currentMatch);
+        for (Match match : matches) {
+            System.out.println(match);
         }
-
-
-
-
-
     }
 }
